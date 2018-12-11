@@ -53,7 +53,7 @@ class BaseOptions():
         str_ids = opt.gpu_ids.split(',')
         opt.gpu_ids = []
         for str_id in str_ids:
-            temp = str_id
+            # temp = str_id
             id = int(str_id)
             if id >= 0:
                 opt.gpu_ids.append(id)
@@ -64,6 +64,7 @@ class BaseOptions():
 
         args = vars(opt)
 
+        #print options
         print('------------ Options -------------')
         for k, v in sorted(args.items()):
             print('%s: %s' % (str(k), str(v)))
