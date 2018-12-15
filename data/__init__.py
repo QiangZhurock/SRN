@@ -27,7 +27,7 @@ class CustomDatasetDataLoader(BaseDataLoader):
         self.dataset = CreateDataset(opt)
         self.dataloader = torch.utils.data.DataLoader(
             self.dataset,
-            batch_size=opt.batchsize,
+            batch_size=opt.batchSize,
             shuffle=not opt.serial_batches,
             num_workers=int(opt.nThreads)
         )
@@ -39,7 +39,8 @@ class CustomDatasetDataLoader(BaseDataLoader):
         pass
 
     def __len__(self):
-        return min(len(self.dataset), self.opt.max_dataset_size)
+        #return min(len(self.dataset), self.opt.max_dataset_size)
+        return  len(self.dataset)
 
     def __iter__(self):
         for i, data in enumerate(self.dataloader):
