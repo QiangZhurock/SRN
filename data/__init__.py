@@ -43,7 +43,7 @@ class CustomDatasetDataLoader(BaseDataLoader):
         return  len(self.dataset)
 
     def __iter__(self):
-        for i, data in enumerate(self.dataloader):
+         for i, data in enumerate(self.dataloader):
             if i * self.opt.batchSize >= self.opt.max_dataset_size:
                 break
             yield data
