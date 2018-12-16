@@ -48,7 +48,6 @@ class UnalignedDataset(BaseDataset):
         B = self.transform(B_img)
         C = self.transform(C_img)
         D = self.transform(D_img)
-
     def __len__(self):
         return max(self.A_size, self.B_size, self.C_size, self.D_size)
 
