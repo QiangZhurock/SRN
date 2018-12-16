@@ -12,6 +12,8 @@ class BaseDataset(data.Dataset):
     def initialize(self, opt):
         pass
 
+
+
 #define the transform function
 def get_transform(opt):
     transform_list = []
