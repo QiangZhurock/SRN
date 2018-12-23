@@ -15,7 +15,7 @@ class BaseModel():
 
         self.loss_names = []
         self.model_names = []
-        self.visula_names = []
+        self.visual_names = []
         self.image_paths = []
 
     def set_input(self, input):
