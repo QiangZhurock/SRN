@@ -3,6 +3,10 @@ from .import networks
 import torch
 import itertools
 from torch.autograd import Variable
+from .vgg16 import Vgg16
+import utils
+import os
+import torch.nn as nn
 
 class SRN_GANModel(BaseModel):
     def name(self):
@@ -30,9 +34,7 @@ class SRN_GANModel(BaseModel):
 
         if self.isTrain:
             #define loss functions
-            def loss_function():
-                pass
-
+            self.criterionMSE = torch.nn.MSELoss()
             self.criterionGAN = networks.GANLoss(use_lsgan=not opt.no_lsgan, tensor=self.Tensor)
             self.optimizer_G = torch.optim.Adam(itertools.chain(self.netG_B.parameters()),
                                                 lr=opt.lr, betas=(opt.beta1, 0.999))
@@ -74,6 +76,59 @@ class SRN_GANModel(BaseModel):
         #Real
         pred_real = netD(real)
         loss_D_real = self.criterionGAN(pred_real, True)
+        #Fake
+        pred_fake = netD(fake.detach())
+        loss_D_fake = self.criterionGAN(pred_fake, False)
+        #combine loss
+        loss_D = (loss_D_real + loss_D_fake) * 0.5
+        #backward
+        loss_D.backward()
+        return loss_D
+
+    def backward_D_B(self):
+        f = self.f
+        self.loss_D_B = self.backward_D_basic(self.netD_B, self.real_D, f)
+
+    def backward_G(self):
+        lambda_G = max(self.opt.lambda_G * 0.995, 0.005)
+        eta = max(self.opt.eta * 0.995, 0.0005)
+
+        #GAN loss
+        self.f = self.netG_B(self.real_Y)
+        self.loss_G_B = self.criterionGAN(self.netD_B(self.f), True)
+
+        #MSE loss
+        self.loss_MSE_B = self.criterionMSE(self.f, self.real_D)
+
+        #identity loss between f and real_D
+        vgg = Vgg16()
+        utils.init_vgg16(self.opt.vgg_model_dir)
+        vgg.load_state_dict(torch.load(os.path.join(self.opt.vgg_model_dir, "vgg16.weight")))
+        if len(self.gpu_ids) > 0:
+            vgg = vgg.cuda()
+
+        real_D_copy = Variable(self.real_D.data.clone(),volatile = True)
+        #vgg returns a list of four value
+        features_f = vgg(self.f)
+        features_D = vgg(real_D_copy)
+
+        f_D_c = Variable(features_D[1].data, requires_grad = False)
+        self.loss_identity_B = self.criterionMSE(features_f[1], f_D_c)
+
+        #combine loss lambda_G = 0.01
+        self.loss_G = self.loss_G_B * lambda_G + self.loss_MSE_B + self.loss_identity_B * 0.001
+        self.loss_G.backward()
+
+    def optimize_parameters(self):
+        self.forward()
+
+        self.optimizer_G.zero_grad()
+        self.backward_G()
+        self.optimizer_G.step()
+        #D_B
+        self.optimizer_D.zero_grad()
+        self.backward_D_B()
+        self.optimizer_D.step()
 
 
 
