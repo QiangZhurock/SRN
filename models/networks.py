@@ -62,7 +62,8 @@ def define_D(input_nc, ndf, which_model_netD, n_layers_D = 3, norm = 'batch',
         raise NotImplementedError('Discriminator model name [%s] is not recognized' % which_model_netD)
     return init_net(netD, init_type, gpu_ids)
 
-#define the GAN loss which uses either LSGAN.
+#define the GAN loss which uses either LSGAN or the regular GAN.
+#when lsgan is used, it is basically the MSE loss.
 class GANLoss(nn.Module):
     def __init__(self, use_lsgan = True, target_real_label = 1.0, target_fake_label = 0.0,
                  tensor = torch.FloatTensor):
