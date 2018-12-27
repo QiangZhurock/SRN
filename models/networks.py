@@ -29,14 +29,16 @@ def init_weights(net, init_type='normal', gain=0.02):
             init.normal(m.weight.data, 1.0, gain)
             init.constant(m.bias.data, 0.0)
     print('initialize network with %s' % init_type)
-    net.apply(init_func)
+    net.apply(init_func) #just debug into this function, you can understand it.
 
-def init_net(net, init_type = 'normal', init_gain = 0.02, gpu_ids = []):
+def init_net(net, init_type = 'normal', gpu_ids = []):
     if len(gpu_ids) > 0:
         assert(torch.cuda.is_available())
-        net.to(gpu_ids)
+        #net.to(gpu_ids)
+        net.cuda(gpu_ids[0])
         net = torch.nn.DataParallel(net, gpu_ids)
-    init_weights(net, init_type, gain = init_gain)
+    # init_weights(net, init_type, gain = init_gain)
+    init_weights(net, init_type)
     return net
 
 def define_G(input_nc, output_nc, ngf, which_model_netG, norm = 'batch', use_dropout = False,
@@ -115,11 +117,11 @@ class SRNGenerator(nn.Module):
         self.output_nc = output_nc
         self.ngf = ngf
         if type(norm_layer) == functools.partial:
-            use_bias = norm_layer.func = nn.InstanceNorm2d
+            use_bias = norm_layer.func == nn.InstanceNorm2d
         else:
             use_bias = norm_layer = nn.InstanceNorm2d
 
-        model = [nn.ReflectinPad2d(2),
+        model = [nn.ReflectionPad2d(2),
                  nn.Conv2d(input_nc, 16, kernel_size=5, padding=0,
                            bias=use_bias),
                  norm_layer(16),

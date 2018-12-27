@@ -23,7 +23,7 @@ class SRN_GANModel(BaseModel):
             self.model_names = ['G_B']
         self.netG_B = networks.define_G(opt.input_nc, opt.output_nc,
                                         opt.ngf, opt.which_model_netG, not opt.norm,
-                                        not opt.drop_out, opt.init_type,
+                                        not opt.no_dropout, opt.init_type,
                                         self.gpu_ids)
         if self.isTrain:
             use_sigmoid = opt.no_lsgan
