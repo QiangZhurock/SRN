@@ -29,5 +29,6 @@ class TrainOptions(BaseOptions):
         self.parser.add_argument('--lr_decay_iters', type=int, default=50, help='multiply by a gamma every lr_decay_iters iterations')
         self.parser.add_argument('--lambda_G', type=float, default=0.01, help='multiply by a gamma every lr_decay_iters iterations')
         self.parser.add_argument('--eta', type=float, default=0.001, help='multiply by a gamma every lr_decay_iters iterations')
+        self.parser.add_argument('--vgg_model_dir', default='./vgg' )
         self.isTrain = True
 

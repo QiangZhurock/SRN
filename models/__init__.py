@@ -1,6 +1,6 @@
 def create_model(opt):
     model = None
-    if opt.model == 'GAN':
+    if opt.model == 'SRN_GAN':
         assert(opt.dataset_mode == 'unaligned')
         from .SRN_GAN import SRN_GANModel
         model = SRN_GANModel()

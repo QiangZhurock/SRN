@@ -1,5 +1,6 @@
 import torch.nn as nn
 import torch.nn.functional as F
+import torch
 
 class Vgg16(torch.nn.Module):
     def __init__(self):

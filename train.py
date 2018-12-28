@@ -28,5 +28,6 @@ if __name__ == '__main__':
             epoch_iter += opt.batchSize
             model.set_input(data)
             model.optimize_parameters()
+            print('finished')
 
 

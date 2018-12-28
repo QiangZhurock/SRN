@@ -192,7 +192,7 @@ class SRNGenerator(nn.Module):
         self.model = nn.Sequential(*model)
         self.DeConvModel = nn.Sequential(*DeConvModel)
 
-    def forward(self, *input):
+    def forward(self, input):
         x = self.model(input) # 512 * 4 * 4
         x = x.view(4 * 4 * 512)
         x = self.fc(x)
@@ -243,7 +243,7 @@ class NLayerDiscriminator(nn.Module):
 
         self.model = nn.Sequential(*sequence)
 
-    def forward(self, *input):
+    def forward(self, input):
         return self.model(input)
 
 
