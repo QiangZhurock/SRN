@@ -28,6 +28,29 @@ if __name__ == '__main__':
             epoch_iter += opt.batchSize
             model.set_input(data)
             model.optimize_parameters()
-            print('finished')
+
+            if total_steps % opt.display_freq == 0:
+                save_result = total_steps % opt.update_html_freq == 0
+
+            if total_steps % opt.print_freq == 0:
+                losses = model.get_current_losses()
+                t = (time.time() - iter_start_time) / opt.batchSize
+
+            if total_steps % opt.save_latest_freq == 0:
+                print('saving the latest model (epoch %d, total_steps %d)' %
+                      (epoch, total_steps))
+                model.save_networks('latest')
+
+            iter_data_time = time.time()
+        if epoch % opt.save_epoch_freq == 0:
+            print('saving the model at the end of epoch %d, iters %d' %
+                  (epoch, total_steps))
+            model.save_networks('latest')
+            model.save_networks(epoch)
+
+        print('end of epoch %d / %d \t time taken: %d sec' %
+              (epoch, opt.niter + opt.niter_decay, time.time() - epoch_start_time))
+        model.update_learning_rate()
+        #print('finished')
 
 
