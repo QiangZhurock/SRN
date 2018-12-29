@@ -134,4 +134,5 @@ class SRN_GANModel(BaseModel):
 
 
 
+
 #change the architecture as my approack drawed
